@@ -5,6 +5,7 @@ import http from "http";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import path from "path";
 import { Server } from "socket.io";
 import { connectDB } from "./config/db.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
@@ -57,6 +58,15 @@ const io = new Server(server, {
 
 app.set("io", io);
 registerNoteSocket(io);
+
+// serve React build
+const clientDist = path.join(__dirname, "../client/dist");
+app.use(express.static(clientDist));
+
+// all other non-API routes should return the React app
+app.get("*", (req, res) => {
+  res.sendFile(path.join(clientDist, "index.html"));
+});
 
 app.use(notFound);
 app.use(errorHandler);
