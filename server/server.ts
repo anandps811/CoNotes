@@ -6,6 +6,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import path from "path";
+import { fileURLToPath } from "url";
 import { Server } from "socket.io";
 import { connectDB } from "./config/db.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
@@ -16,6 +17,11 @@ import registerNoteSocket from "./sockets/noteSocket.js";
 
 const app = express();
 const server = http.createServer(app);
+
+// emulate __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:5173,http://localhost:8080")
   .split(",")
